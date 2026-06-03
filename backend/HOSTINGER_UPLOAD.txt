@@ -1,0 +1,59 @@
+PERSONIFY FACE-MATCH API — UPLOAD (NO DOMAIN, NO FILE MANAGER)
+==============================================================
+
+ZIP ON YOUR PC:
+  C:\Users\abdul\Developer\personify\personify-api-deploy.zip
+
+METHOD 1 — PowerShell SCP (use VPS IP only)
+  cd C:\Users\abdul\Developer\personify\backend\scripts
+  .\upload-vps-no-filemanager.ps1
+  (enter root password when asked — never send password in chat)
+
+METHOD 2 — WinSCP (free app, IP only, no domain)
+  Download: https://winscp.net
+  Protocol: SFTP
+  Host: 62.72.20.81  (your VPS IP)
+  User: root
+  Password: from Hostinger VPS panel
+  Upload zip to: /root/personify/backend/
+
+METHOD 3 — GitHub (if SCP fails)
+  1. On PC: push personify project to GitHub (private repo OK)
+  2. Web terminal on VPS:
+     apt install -y git
+     git clone https://github.com/YOUR_USER/personify.git /root/personify-repo
+     cp -r /root/personify-repo/backend/* /root/personify/backend/
+     cd /root/personify/backend && chmod +x scripts/*.sh
+
+HOSTINGER — WEB TERMINAL (paste each block)
+
+  mkdir -p /root/personify/backend
+  cd /root/personify/backend
+  apt update
+  apt install -y unzip nano curl docker.io docker-compose-plugin
+  systemctl enable --now docker
+
+  unzip -o personify-api-deploy.zip
+  chmod +x scripts/*.sh
+  ls -la
+
+  nano .env
+  (paste SUPABASE_URL + SUPABASE_KEY secret key, save Ctrl+O Enter Ctrl+X)
+
+  docker compose up -d --build
+  docker compose logs -f
+
+  curl http://127.0.0.1:8000/health
+
+FLUTTER (on PC):
+  api_constants.dart → http://YOUR_VPS_IP:8000  (no /docs)
+
+FIREWALL:
+  Hostinger panel → allow TCP port 8000
+
+.env EXAMPLE:
+  SUPABASE_URL=https://mginpcemkvealaumocfa.supabase.co
+  SUPABASE_KEY=sb_secret_FROM_SUPABASE_DASHBOARD
+  MATCH_DISTANCE_THRESHOLD=0.6
+  API_HOST=0.0.0.0
+  API_PORT=8000

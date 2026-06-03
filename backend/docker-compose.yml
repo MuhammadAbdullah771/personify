@@ -1,0 +1,14 @@
+# On Hostinger VPS (SSH), from the backend folder:
+#   docker compose up -d --build
+#
+# Requires backend/.env with SUPABASE_URL and SUPABASE_KEY (secret key).
+
+services:
+  personify-api:
+    build: .
+    container_name: personify-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
